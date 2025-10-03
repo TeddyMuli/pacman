@@ -5,5 +5,8 @@ import java.util.Random;
 import javax.swing.*;
 
 public class PacMan extends JPanel {
-
+    PacMan() {
+        setPreferredSize(new Dimension(Constants.boardWidth, Constants.boardHeight));
+        setBackground(Color.BLACK);
+    }
 }
