@@ -4,7 +4,27 @@ import java.util.HashSet;
 import java.util.Random;
 import javax.swing.*;
 
-public class PacMan extends JPanel implements ActionListener {
+public class PacMan extends JPanel implements ActionListener, KeyListener {
+    @Override
+    public void keyTyped(KeyEvent keyEvent) {}
+
+    @Override
+    public void keyPressed(KeyEvent keyEvent) {}
+
+    @Override
+    public void keyReleased(KeyEvent keyEvent) {
+        //System.out.println("KeyEvent: " + keyEvent.getKeyCode());
+        if (keyEvent.getKeyCode() == KeyEvent.VK_UP) {
+            pacman.updateDirection('U');
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_DOWN) {
+            pacman.updateDirection('D');
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_LEFT) {
+            pacman.updateDirection('L');
+        } else if (keyEvent.getKeyCode() == KeyEvent.VK_RIGHT) {
+            pacman.updateDirection('R');
+        }
+    }
+
     class Block {
         int x;
         int y;
@@ -13,6 +33,9 @@ public class PacMan extends JPanel implements ActionListener {
         Image image;
 
         int startX, startY;
+        char direction = 'U'; // U D L R
+        int velocityX = 0;
+        int velocityY = 0;
 
         Block(Image image, int x, int y, int width, int height) {
             this.image = image;
@@ -22,6 +45,27 @@ public class PacMan extends JPanel implements ActionListener {
             this.height = height;
             this.startX = x;
             this.startY = y;
+        }
+
+        void updateDirection(char direction) {
+            this.direction = direction;
+            updateVelocity();
+        }
+
+        void updateVelocity() {
+            if (this.direction == 'U') {
+                this.velocityX = 0;
+                this.velocityY = -Constants.tileSize/4;
+            } else if (this.direction == 'D') {
+                this.velocityX = 0;
+                this.velocityY = Constants.tileSize/4;
+            } else if (this.direction == 'L') {
+                this.velocityY = 0;
+                this.velocityX = -Constants.tileSize/4;
+            } else if (this.direction == 'R') {
+                this.velocityY = 0;
+                this.velocityX = Constants.tileSize/4;
+            }
         }
     }
     private Image wallImage, blueGhostImage, pinkGhostImage, redGhostImage, orangeGhostImage;
@@ -37,6 +81,8 @@ public class PacMan extends JPanel implements ActionListener {
     PacMan() {
         setPreferredSize(new Dimension(Constants.boardWidth, Constants.boardHeight));
         setBackground(Color.BLACK);
+        addKeyListener(this);
+        setFocusable(true);
 
         // load images
         wallImage = new ImageIcon(getClass().getResource("./assets/wall.png")).getImage();
@@ -112,9 +158,14 @@ public class PacMan extends JPanel implements ActionListener {
             g.fillRect(food.x, food.y, food.width, food.height);
         }
     }
+    public void move() {
+        pacman.x += pacman.velocityX;
+        pacman.y += pacman.velocityY;
+    }
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        move();
         repaint();
     }
 }
