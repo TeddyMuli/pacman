@@ -4,7 +4,7 @@ import java.util.HashSet;
 import java.util.Random;
 import javax.swing.*;
 
-public class PacMan extends JPanel {
+public class PacMan extends JPanel implements ActionListener {
     class Block {
         int x;
         int y;
@@ -32,6 +32,8 @@ public class PacMan extends JPanel {
     HashSet<Block> ghosts;
     Block pacman;
 
+    Timer gameLoop;
+
     PacMan() {
         setPreferredSize(new Dimension(Constants.boardWidth, Constants.boardHeight));
         setBackground(Color.BLACK);
@@ -49,6 +51,8 @@ public class PacMan extends JPanel {
         pacManRightImage = new ImageIcon(getClass().getResource("./assets/pacmanRight.png")).getImage();
 
         loadMap();
+        gameLoop = new Timer(50, this);
+        gameLoop.start();
     }
     public void loadMap() {
         walls = new HashSet<Block>();
@@ -97,12 +101,20 @@ public class PacMan extends JPanel {
         g.drawImage(pacman.image, pacman.x, pacman.y, pacman.width, pacman.height, null);
 
         for (Block ghost : ghosts) {
-            g.drawImage(ghost.image, ghost.x, ghost.y, ghost.width, ghost
-                    .height, null);
+            g.drawImage(ghost.image, ghost.x, ghost.y, ghost.width, ghost.height, null);
         }
 
         for (Block wall: walls) {
             g.drawImage(wall.image, wall.x, wall.y, wall.width, wall.height, null);
         }
+        g.setColor(Color.white);
+        for (Block food: foods) {
+            g.fillRect(food.x, food.y, food.width, food.height);
+        }
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        repaint();
     }
 }
